@@ -19,6 +19,7 @@
     import axios from "axios";
     import first from "lodash/first";
     import random from "lodash/random";
+    import replace from "lodash/replace";
 
     const APIKEY = process.env.VUE_APP_MARVEL_API_KEY
 
@@ -47,7 +48,8 @@
                 });
 
                 this.hero = first(heroesRequest.data.data.results)
-                this.portrait = `${this.hero.thumbnail.path}/portrait_uncanny.${this.hero.thumbnail.extension}`
+                const securePortraitUrlPath = replace(this.hero.thumbnail.path, 'http://', 'https://');
+                this.portrait = `${securePortraitUrlPath}/portrait_uncanny.${this.hero.thumbnail.extension}`
 
             } catch (e) {
                 console.error(e);
