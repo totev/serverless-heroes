@@ -18,25 +18,41 @@
 <script>
     import axios from "axios";
     import first from "lodash/first";
+    import random from "lodash/random";
+
     const APIKEY = process.env.VUE_APP_MARVEL_API_KEY
 
     export default {
         name: "RandomHero",
         data () {
             return {
-                hero: undefined,
+                hero: {
+                    name: 'World known hero',
+                    description: 'hero background'
+                },
                 copyright: "© 2018 MARVEL",
                 portrait: ""
             };
         },
         async created () {
-            const heroesRequest = await  axios.get("https://gateway.marvel.com/v1/public/characters/1009351", {
-                params: {apikey: APIKEY}
-            });
-            const remoteHero = heroesRequest.data.data
-            this.hero = first(remoteHero.results)
-            console.log("baml!", JSON.stringify(this.hero));
-            this.portrait = `${this.hero.thumbnail.path}/portrait_uncanny.${this.hero.thumbnail.extension}`
+            try {
+                const heroesFishingRequest = await  axios.get("https://gateway.marvel.com/v1/public/characters", {
+                    params: {apikey: APIKEY, limit: 1}
+                });
+
+                const randomHeroPos = random(0, heroesFishingRequest.data.data.total)
+
+                const heroesRequest = await  axios.get("https://gateway.marvel.com/v1/public/characters", {
+                    params: {apikey: APIKEY, limit: 1, offset:randomHeroPos}
+                });
+
+                this.hero = first(heroesRequest.data.data.results)
+                this.portrait = `${this.hero.thumbnail.path}/portrait_uncanny.${this.hero.thumbnail.extension}`
+
+            } catch (e) {
+                console.error(e);
+            }
+
 
         },
         methods: {},
@@ -44,7 +60,7 @@
 </script>
 
 <style scoped>
-    .bold{
+    .bold {
         font-weight: bold;
     }
 
@@ -66,15 +82,15 @@
         justify-content: center;
     }
 
-    .about{
+    .about {
         padding: 1em;
     }
 
-    .about .description{
+    .about .description {
         text-align: justify;
     }
 
-    .portrait{
+    .portrait {
         padding: 1em;
     }
 
