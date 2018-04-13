@@ -30,7 +30,7 @@
             };
         },
         async created () {
-            const heroesRequest = await  axios.get("http://gateway.marvel.com/v1/public/characters/1009351", {
+            const heroesRequest = await  axios.get("https://gateway.marvel.com/v1/public/characters/1009351", {
                 params: {apikey: APIKEY}
             });
             const remoteHero = heroesRequest.data.data
